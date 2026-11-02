@@ -1,0 +1,90 @@
+name: CI_artefacts
+
+on:
+  pull_request:
+    branches: main
+
+jobs:
+  build-debug:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build project (Debug)
+        run: |
+          dotnet build UrlShortener.Admin/UrlShortener.Admin.csproj --configuration Debug
+          dotnet build UrlShortener.Api/UrlShortener.Api.csproj --configuration Debug
+          dotnet build UrlShortener.Contracts/UrlShortener.Contracts.csproj --configuration Debug
+
+      - name: Upload build artifacts (Debug)
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-Debug
+          path: |
+            UrlShortener.Admin/bin/Debug/
+            UrlShortener.Api/bin/Debug/
+            UrlShortener.Contracts/bin/Debug/
+          if-no-files-found: error
+
+  test-debug:
+    needs: build-debug
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run tests (Debug)
+        run: dotnet test UrlShortener.Tests/UrlShortener.Tests.csproj --configuration Debug
+
+  build-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build project (Release)
+        run: |
+          dotnet build UrlShortener.Admin/UrlShortener.Admin.csproj --configuration Release
+          dotnet build UrlShortener.Api/UrlShortener.Api.csproj --configuration Release
+          dotnet build UrlShortener.Contracts/UrlShortener.Contracts.csproj --configuration Release
+
+      - name: Upload build artifacts (Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-Release
+          path: |
+            UrlShortener.Admin/bin/Release/
+            UrlShortener.Api/bin/Release/
+            UrlShortener.Contracts/bin/Release/
+          if-no-files-found: error
+
+  test-release:
+    needs: build-release
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run tests (Release)
+        run: dotnet test UrlShortener.Tests/UrlShortener.Tests.csproj --configuration Release
