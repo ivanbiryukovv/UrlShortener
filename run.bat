@@ -11,4 +11,4 @@ timeout /t 8 /nobreak >nul
 echo Запуск WPF-админки...
 start "UrlShortener Admin" cmd /k dotnet run --project UrlShortener.Admin
 
-echo Готово. API и админка запущены в отдельных окнах.
+
