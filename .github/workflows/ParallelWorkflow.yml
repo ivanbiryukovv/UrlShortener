@@ -1,0 +1,52 @@
+name: Parallel Workflow
+
+on: push
+
+jobs:
+ build-debug:
+  runs-on: windows-latest
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v4
+    with:
+     dotnet-version: '10.0.x'
+  - name: Build project
+    run: |
+     dotnet build UrlShortener.Admin/UrlShortener.Admin.csproj --configuration Debug
+     dotnet build UrlShortener.Api/UrlShortener.Api.csproj --configuration Debug
+     dotnet build UrlShortener.Contracts/UrlShortener.Contracts.csproj --configuration Debug
+ test-debug:
+  needs: build-debug
+  runs-on: windows-latest
+  steps: 
+   - name: Checkout code
+     uses: actions/checkout@v4
+   - name: Run tests
+     run: dotnet test UrlShortener.Tests/UrlShortener.Tests.csproj --configuration Debug
+ build-release:
+  runs-on: windows-latest
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v4
+    with:
+     dotnet-version: '10.0.x'
+  - name: Build project
+    run: |
+     dotnet build UrlShortener.Admin/UrlShortener.Admin.csproj --configuration Release
+     dotnet build UrlShortener.Api/UrlShortener.Api.csproj --configuration Release
+     dotnet build UrlShortener.Contracts/UrlShortener.Contracts.csproj --configuration Release
+ test-release:
+  needs: build-debug
+  runs-on: windows-latest
+  steps: 
+   - name: Checkout code
+     uses: actions/checkout@v4
+   - name: Run tests
+     run: dotnet test UrlShortener.Tests/UrlShortener.Tests.csproj --configuration Release
+    
+     
+    
