@@ -1,0 +1,16 @@
+<Application x:Class="UrlShortener.Admin.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:inf="clr-namespace:UrlShortener.Admin.Infrastructure"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <inf:BoolToVisibilityConverter x:Key="BoolToVis" />
+            <inf:NullToVisibilityConverter x:Key="NullToVis" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
