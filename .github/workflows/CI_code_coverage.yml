@@ -1,0 +1,45 @@
+name: CI with Code Coverage
+
+on:
+  push:
+    branches: main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build project (Release)
+        run: |
+          dotnet build UrlShortener.Admin/UrlShortener.Admin.csproj --configuration Release
+          dotnet build UrlShortener.Api/UrlShortener.Api.csproj --configuration Release
+          dotnet build UrlShortener.Contracts/UrlShortener.Contracts.csproj --configuration Release
+
+  test:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run tests with coverage
+        run: dotnet test UrlShortener.Tests/UrlShortener.Tests.csproj --configuration Release --collect:"XPlat Code Coverage"
+
+      - name: Upload code coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: '**/coverage.cobertura.xml'
+          if-no-files-found: error
